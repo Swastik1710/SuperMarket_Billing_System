@@ -8,7 +8,7 @@ using namespace std;
 int main()
 {
     fstream fp1, fp2;
-    fp1.open("database.txt", ios::app | ios::out);
+    fp1.open("database1.txt", ios::app | ios::out);
     for (int i = 0; i < 20; i++)
     {
 

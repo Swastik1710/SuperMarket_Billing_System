@@ -43,6 +43,7 @@ void init()
             fp1 << "*";
         fp1 << endl;
     }
+    fp1.close();
 }
 
 void menu()
@@ -196,8 +197,8 @@ void write()
     int code = atoi(tempcode);
     key = code % 20;
     cout << s[key].pcode;
-    /*while(s[key].pcode!="")
-        key++;*/
+    while(strcmp(s[key].pcode,"xx"))
+        key++;
     strcpy(s[key].pcode, tempcode);
     cout << "\n\t\t\t Enter the Product Name ";
     cin >> s[key].pname;
