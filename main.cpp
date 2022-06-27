@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -12,33 +12,38 @@ public:
     char price[20];
     char dis[20];
     char pname[20];
-};
+} s[100], t;
+char buffer[50], temp[50];
+int i, count = 0, key;
+fstream fp1, fp2;
 
 void administrator();
 void buyer();
 void write();
 void pack();
+void unpack();
 
 
-shopping s[100], t;
-char buffer[50], temp[50];
-int i,count=0, key;
-fstream fp1,fp2;
 
 void init()
 {
-    fp1.open("database.txt", ios::app|ios::out);
-    for(i=0;i<10;i++)
+    fp1.open("database.txt", ios::app | ios::out);
+    for (i = 0; i < 20; i++)
     {
-        fp1 << i <<"|";
-        fp1 << "xx"<< "|";
-        fp1 << "xx"<< "|";
-        fp1 << "xx"<< "|";
-        fp1 << "xx"<< "|";
-        for (int j = 0;j < 33;j++)
-            fp1<<"*";
+
+        fp1 << "xx"
+            << "|";
+        fp1 << "xx"
+            << "|";
+        fp1 << "xx"
+            << "|";
+        fp1 << "xx"
+            << "|";
+        for (int j = 0; j < 35; j++)
+            fp1 << "*";
         fp1 << endl;
     }
+    fp1.close();
 }
 
 void menu()
@@ -136,7 +141,6 @@ m:
     cout << "\n\t\t\t|_________2. Back to Main Menu_______|";
     cout << "\n\n\t Please enter your choice ";
     cin >> choice;
-
     switch (choice)
     {
     case 1:
@@ -152,47 +156,50 @@ m:
 */
 void pack(shopping p)
 {
-   
-    fp1.open("database.txt",ios::out| ios::app);
-    strcpy(buffer,p.pcode);
-    strcat(buffer,"|");
-    strcat(buffer,p.pname);
-    strcat(buffer,"|");
-    strcat(buffer,p.price);
-    strcat(buffer,"|");
-    strcat(buffer,p.dis);
-    strcat(buffer,"|");
+
+    fp1.open("database.txt", ios::out | ios::app);
+    strcpy(buffer, p.pcode);
+    strcat(buffer, "|");
+    strcat(buffer, p.pname);
+    strcat(buffer, "|");
+    strcat(buffer, p.price);
+    strcat(buffer, "|");
+    strcat(buffer, p.dis);
+    strcat(buffer, "|");
     int x = strlen(buffer);
-    for(int j=0;j<45-x;j++)
-        strcat(buffer,"*");
-    
-    fp1<<key<<"|"<<buffer<<"|"<<endl;
+    for (int j = 0; j < 47 - x; j++)
+        strcat(buffer, "*");
+
+    fp1 << buffer << endl;
     fp1.close();
 }
 
 void unpack()
-{   
+{
     fp1.open("database.txt", ios::in);
-    for(i=0;i<20;i++)
+    for (i = 0; i < 20; i++)
     {
-        fp1.getline(buffer,100);
-        sscanf(buffer,"%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|",s[i].pcode, s[i].pname, s[i].price, s[i].dis);
+        fp1.getline(buffer, 100);
+        sscanf(buffer, "%[^|]|%[^|]|%[^|]|%[^|]|", s[i].pcode, s[i].pname, s[i].price, s[i].dis);
+
+       
     }
     fp1.close();
 }
 
-
-
 void write()
 {
     char tempcode[20];
-    
+
     cout << "\n\n\t\t\t Add new Product";
     cout << "\n\t\t\t Enter the Product Code ";
-    cin>>tempcode;
+    cin >> tempcode;
     int code = atoi(tempcode);
     key = code % 20;
-    strcpy(s[key].pcode,tempcode);
+    cout << s[key].pcode;
+    while(strcmp(s[key].pcode,"xx"))
+        key++;
+    strcpy(s[key].pcode, tempcode);
     cout << "\n\t\t\t Enter the Product Name ";
     cin >> s[key].pname;
     cout << "\n\t\t\t Enter the Product Price ";
@@ -203,13 +210,13 @@ void write()
     remove("database.txt");
     fp1.open("database.txt", ios::out);
     fp1.close();
-    for(int j=0;j<20;j++)
+    for (int j = 0; j < 20; j++)
         pack(s[j]);
 }
 
 int main()
 {
-    // init();
+    init();
     menu();
     return 0;
 }
