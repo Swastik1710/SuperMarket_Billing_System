@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include<string.h>
-#include<stdlib.h>
+#include <string.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -29,7 +29,7 @@ public:
 
 shopping s[100], t;
 char buffer[50], temp[50];
-int i,count=0;
+int i, count = 0;
 fstream data;
 
 void shopping ::menu()
@@ -114,7 +114,7 @@ m:
 
 void shopping::buyer()
 {
-    m:
+m:
     int choice;
     cout << "\n\t\t\t\t\t Menu";
     cout << "\n\t\t\t|____________________________________|";
@@ -139,16 +139,16 @@ void shopping::buyer()
 void shopping::pack(shopping p)
 {
     fstream data;
-    data.open("database.txt", ios::out|ios::app);
-    strcpy(buffer,p.pcode);
-    strcat(buffer,"|");
-    strcat(buffer,p.pname);
-    strcat(buffer,"|");
-    strcat(buffer,p.price);
-    strcat(buffer,"|");
-    strcat(buffer,p.dis);
-    strcat(buffer,"|");
-    data<<buffer<<endl;
+    data.open("database.txt", ios::out | ios::app);
+    strcpy(buffer, p.pcode);
+    strcat(buffer, "|");
+    strcat(buffer, p.pname);
+    strcat(buffer, "|");
+    strcat(buffer, p.price);
+    strcat(buffer, "|");
+    strcat(buffer, p.dis);
+    strcat(buffer, "|");
+    data << buffer << endl;
     data.close();
 }
 
@@ -156,34 +156,35 @@ void shopping::unpack()
 {
     fstream data;
     data.open("database.txt", ios::in);
-    for(i=0;i<count;i++)
+    for (i = 0; i < count; i++)
     {
-        data.getline(buffer,100);
-        sscanf(buffer,"%[^|]|%[^|]|%[^|]|%[^|]|", s[i].pcode, s[i].pname, s[i].price, s[i].dis);
+        data.getline(buffer, 100);
+        sscanf(buffer, "%[^|]|%[^|]|%[^|]|%[^|]|", s[i].pcode, s[i].pname, s[i].price, s[i].dis);
     }
     data.close();
 }
 
 void shopping::search()
 {
-    
+
     cout << "\n\t\t\t Enter the Product Code ";
     cin >> temp;
-    for(i=0;i<count;i++)
+    for (i = 0; i < count; i++)
     {
-        if(!strcmp(s[i].pcode,temp))
+        if (!strcmp(s[i].pcode, temp))
         {
-            cout<<"Record found\n"<<s[i].pcode<<"\t"<<s[i].pname<<"\t"<<s[i].price<<"\t"<<s[i].dis<<endl;
+            cout << "Record found\n"
+                 << s[i].pcode << "\t" << s[i].pname << "\t" << s[i].price << "\t" << s[i].dis << endl;
             break;
         }
     }
-    if(i==count)
-            cout<<"Record not found";
+    if (i == count)
+        cout << "Record not found";
 }
 
 void shopping::add()
 {
-    m:
+m:
     fstream data;
     int c, token = 0;
     float p, d;
@@ -343,7 +344,7 @@ void shopping::list()
 
 void shopping::receipt()
 {
-    m:
+m:
     fstream data;
     int arrc[100], arrq[100], c = 0;
     char choice;

@@ -89,7 +89,7 @@ m:
     case 2:
         buy();
     case 3:
-        cout << "\n\t\t\t\tHave a nice day!!!";
+        cout << "\n\t\t\t\tHave a nice day!!! \n";
         exit(0);
     default:
         cout << "\t\t\t\tPlease select from the given options";
@@ -193,7 +193,8 @@ void write()
     while (strcmp(s[key].pcode, "xx"))
     {
         key++;
-        jump[key]++;
+        if (key == 20)
+            key = 0;
     }
 
     strcpy(s[key].pcode, tempcode);
@@ -213,23 +214,27 @@ void write()
 
 void search()
 {
-    c = 0;
     char tempcode[20];
     cout << "\n\t\t\t\tEnter the Product Code to search for: ";
     cin >> tempcode;
     int code = atoi(tempcode);
     key = code % 20;
-    unpackOneRecord(key + jump[key]);
-
-    if (strcmp(t.pcode, tempcode) == 0)
+    for (c = 0; c < 20; c++)
     {
-        cout << "\n\t\t\t\tItem found!";
-        cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
-        cout << "\n\t\t\t\tPrduct Name : " << t.pname;
-        cout << "\n\t\t\t\tPrduct Price : " << t.price;
-        cout << "\n\t\t\t\tDiscount on the Product : " << t.dis;
+        unpackOneRecord(key);
+        if (strcmp(t.pcode, tempcode) == 0)
+        {
+            c = -1;
+            cout << "\n\t\t\t\tItem found!";
+            cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
+            cout << "\n\t\t\t\tPrduct Name : " << t.pname;
+            cout << "\n\t\t\t\tPrduct Price : " << t.price;
+            cout << "\n\t\t\t\tDiscount on the Product : " << t.dis;
 
-        return;
+            return;
+        }
+        else
+            key++;
     }
     cout << "\n\t\t\t\tItem not found\n";
 }
@@ -240,22 +245,16 @@ void modify()
 
     char tempcode[20];
     cout << "\n\n\t\t\t\tModify Product Details";
-    cout << "\n\t\t\t\tEnter the Product Code ";
-    cin >> tempcode;
-    int code = atoi(tempcode);
-    key = code % 20;
-    if (strcmp(s[key + jump[key]].pcode, tempcode) != 0)
-    {
-        cout << "\n\t\t\t\tItem not found\n";
-        return;
-    }
-    cout << "\n\t\t\t\tEnter the Modified Product details";
-    cout << "\n\t\t\t\tEnter the Product Name ";
-    cin >> s[key + jump[key]].pname;
+
+    search();
+
+    cout << "\n\n\t\t\t\tEnter the Modified Product details";
+    cout << "\n\n\t\t\t\tEnter the Product Name ";
+    cin >> s[key].pname;
     cout << "\n\t\t\t\tEnter the Product Price ";
-    cin >> s[key + jump[key]].price;
+    cin >> s[key].price;
     cout << "\n\t\t\t\tEnter the Product Discount ";
-    cin >> s[key + jump[key]].dis;
+    cin >> s[key].dis;
     fp1.close();
     remove("database.txt");
     fp1.open("database.txt", ios::out);
@@ -268,26 +267,14 @@ void remove()
 {
     int tempKey;
     char tempcode[20];
-    cout << "\n\n\t\t\t\tDelete Product";
-    cout << "\n\t\t\t\tEnter the Product Code ";
-    cin >> tempcode;
-    int code = atoi(tempcode);
-    key = code % 20;
-    if (strcmp(s[key + jump[key]].pcode, tempcode) != 0)
-    {
-        cout << "\n\t\t\t\tItem not found\n";
-        return;
-    }
-    cout << "\n\t\t\t\tItem found!";
-    cout << "\n\n\t\t\t\tProduct Code : " << s[key + jump[key]].pcode;
-    cout << "\n\t\t\t\tPrduct Name : " << s[key + jump[key]].pname;
-    cout << "\n\t\t\t\tPrduct Price : " << s[key + jump[key]].price;
-    cout << "\n\t\t\t\tDiscount on the Product : " << s[key + jump[key]].dis;
+    cout << "\n\n\t\t\t\tDelete a Product\n";
 
-    strcpy(s[key + jump[key]].pcode, "xx");
-    strcpy(s[key + jump[key]].pname, "xx");
-    strcpy(s[key + jump[key]].price, "xx");
-    strcpy(s[key + jump[key]].dis, "xx");
+    search();
+
+    strcpy(s[key].pcode, "xx");
+    strcpy(s[key].pname, "xx");
+    strcpy(s[key].price, "xx");
+    strcpy(s[key].dis, "xx");
     cout << "\n\n\t\t\t\tITEM DELETED!";
     fp1.close();
     remove("database.txt");
