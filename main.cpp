@@ -17,6 +17,7 @@ char buffer[50], temp[50];
 int i, count = 0, key, c;
 fstream fp1, fp2;
 int jump[20];
+int current = 0, previous = 0, curkey;
 
 void administrator();
 void write();
@@ -24,7 +25,6 @@ void pack();
 void unpack();
 void search();
 void modify();
-void remove();
 void receipt();
 void buy();
 
@@ -110,8 +110,7 @@ m:
     cout << "\n\t\t\t\t    |  1. Add Product           |";
     cout << "\n\t\t\t\t    |  2. Search Product        |";
     cout << "\n\t\t\t\t    |  3. Edit Product Details  |";
-    cout << "\n\t\t\t\t    |  4. Remove Product        |";
-    cout << "\n\t\t\t\t    |  5. Back to Main Menu     |";
+    cout << "\n\t\t\t\t    |  4. Back to Main Menu     |";
     cout << "\n\n\t\t\t\tPlease enter your choice: ";
     cin >> choice;
 
@@ -129,10 +128,6 @@ m:
         modify();
         break;
     case 4:
-        unpack();
-        remove();
-        break;
-    case 5:
         menu();
         break;
     default:
@@ -184,26 +179,62 @@ void unpackOneRecord(int k)
 
 void write()
 {
+    int flag = 0;
     char tempcode[20];
     cout << "\n\n\t\t\t\tAdd new Product";
     cout << "\n\n\t\t\t\tEnter the Product Code: ";
     cin >> tempcode;
     int code = atoi(tempcode);
     key = code % 20;
-    while (strcmp(s[key].pcode, "xx"))
+    current = key;
+    previous = key;
+    int empty = 0;
+    while (strcmp(s[current].pcode, "xx"))
     {
-        key++;
-        if (key == 20)
-            key = 0;
+        while ((strcmp(s[current].pcode, "xx")) && (atoi(s[current].pcode)) % 20 != key)
+        {
+            current++;
+            previous = current;
+            if (current == 20)
+            {
+                current = 0;
+                previous = current;
+            }
+            if (strcmp(s[current].pcode, "xx") == 0)
+            {
+                empty = 1;
+                break;
+            }
+        }
+        if (empty == 1)
+            break;
+        if (jump[current] != 0)
+        {
+            flag = 1;
+            current = jump[current];
+            previous = current;
+        }
+        else
+        {
+            flag = 1;
+            current++;
+            if (current == 20)
+                current = 0;
+        }
     }
+    if (flag == 1)
+        jump[previous] = current;
 
-    strcpy(s[key].pcode, tempcode);
+    /*for (int q = 0; q < 20; q++)
+        cout << jump[q] << "  ";*/
+
+    strcpy(s[current].pcode, tempcode);
     cout << "\n\t\t\t\tEnter the Product Name: ";
-    cin >> s[key].pname;
+    cin >> s[current].pname;
     cout << "\n\t\t\t\tEnter the Product Price: ";
-    cin >> s[key].price;
+    cin >> s[current].price;
     cout << "\n\t\t\t\tEnter the Product Discount: ";
-    cin >> s[key].dis;
+    cin >> s[current].dis;
     fp1.close();
     remove("database.txt");
     fp1.open("database.txt", ios::out);
@@ -214,29 +245,55 @@ void write()
 
 void search()
 {
+    int flag = 0;
     char tempcode[20];
     cout << "\n\t\t\t\tEnter the Product Code to search for: ";
     cin >> tempcode;
     int code = atoi(tempcode);
     key = code % 20;
-    for (c = 0; c < 20; c++)
+    curkey = key;
+    unpackOneRecord(curkey);
+    while ((atoi(t.pcode)) % 20 != key)
     {
-        unpackOneRecord(key);
+        curkey++;
+        if (curkey == 20)
+            curkey = 0;
+        unpackOneRecord(curkey);
+    }
+
+    for (int q = 0; q < 20; q++)
+        cout << jump[q] << "  ";
+
+    while (jump[curkey] != 0)
+    {
         if (strcmp(t.pcode, tempcode) == 0)
         {
-            c = -1;
-            cout << "\n\t\t\t\tItem found!";
-            cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
-            cout << "\n\t\t\t\tPrduct Name : " << t.pname;
-            cout << "\n\t\t\t\tPrduct Price : " << t.price;
-            cout << "\n\t\t\t\tDiscount on the Product : " << t.dis;
-
-            return;
+            flag = 1;
+            break;
         }
-        else
-            key++;
+        previous = curkey;
+        curkey = jump[curkey];
+        unpackOneRecord(curkey);
     }
-    cout << "\n\t\t\t\tItem not found\n";
+
+    if (jump[curkey] == 0)
+    {
+        if (strcmp(t.pcode, tempcode) == 0)
+        {
+            flag = 1;
+        }
+    }
+
+    if (flag == 1)
+    {
+        cout << "\n\t\t\t\tItem found!";
+        cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
+        cout << "\n\t\t\t\tPrduct Name : " << t.pname;
+        cout << "\n\t\t\t\tPrduct Price : " << t.price;
+        cout << "\n\t\t\t\tDiscount on the Product : " << t.dis;
+    }
+    else
+        cout << "\n\t\t\t\tItem not found\n";
 }
 
 void modify()
@@ -250,32 +307,11 @@ void modify()
 
     cout << "\n\n\t\t\t\tEnter the Modified Product details";
     cout << "\n\n\t\t\t\tEnter the Product Name ";
-    cin >> s[key].pname;
+    cin >> s[curkey].pname;
     cout << "\n\t\t\t\tEnter the Product Price ";
-    cin >> s[key].price;
+    cin >> s[curkey].price;
     cout << "\n\t\t\t\tEnter the Product Discount ";
-    cin >> s[key].dis;
-    fp1.close();
-    remove("database.txt");
-    fp1.open("database.txt", ios::out);
-    fp1.close();
-    for (int j = 0; j < 20; j++)
-        pack(s[j]);
-}
-
-void remove()
-{
-    int tempKey;
-    char tempcode[20];
-    cout << "\n\n\t\t\t\tDelete a Product\n";
-
-    search();
-
-    strcpy(s[key].pcode, "xx");
-    strcpy(s[key].pname, "xx");
-    strcpy(s[key].price, "xx");
-    strcpy(s[key].dis, "xx");
-    cout << "\n\n\t\t\t\tITEM DELETED!";
+    cin >> s[curkey].dis;
     fp1.close();
     remove("database.txt");
     fp1.open("database.txt", ios::out);
@@ -372,7 +408,7 @@ void receipt()
 
 int main()
 {
-    // init();
+    init();
     for (int i = 0; i < 20; i++)
         jump[i] = 0;
     menu();
