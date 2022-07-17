@@ -17,7 +17,7 @@ char buffer[50], temp[50];
 int i, count = 0, key, c;
 fstream fp1, fp2;
 int jump[20];
-int current = 0, previous = 0, curkey;
+int current = 0, previous = 0, curkey, flag1;
 
 void administrator();
 void write();
@@ -245,7 +245,7 @@ void write()
 
 void search()
 {
-    int flag = 0;
+    flag1 = 0;
     char tempcode[20];
     cout << "\n\t\t\t\tEnter the Product Code to search for: ";
     cin >> tempcode;
@@ -268,7 +268,7 @@ void search()
     {
         if (strcmp(t.pcode, tempcode) == 0)
         {
-            flag = 1;
+            flag1 = 1;
             break;
         }
         previous = curkey;
@@ -280,11 +280,11 @@ void search()
     {
         if (strcmp(t.pcode, tempcode) == 0)
         {
-            flag = 1;
+            flag1 = 1;
         }
     }
 
-    if (flag == 1)
+    if (flag1 == 1)
     {
         cout << "\n\t\t\t\tItem found!";
         cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
@@ -351,9 +351,11 @@ m:
 
 void receipt()
 {
+    shopping rec[100];
     char tempcode[20];
     int quantity[20];
     int totalProd = 0;
+
     float amount, totalAmount, discount;
     char ch;
     fp1.close();
@@ -365,18 +367,13 @@ void receipt()
     cout << "\n\t\t\t\t                                ";
     do
     {
-        cout << "\n\t\t\t\tEnter the Product Code : ";
-        cin >> tempcode;
-        int code = atoi(tempcode);
-        key = code % 20;
-        unpackOneRecord(key + jump[key]);
+        search();
 
-        if (strcmp(t.pcode, tempcode) != 0)
+        if (flag1 != 1)
         {
-            cout << "\n\t\t\t\tItem not found\n";
+            return;
         }
-
-        else
+        if (flag1 == 1)
         {
             strcpy(bill[totalProd].pcode, t.pcode);
             strcpy(bill[totalProd].pname, t.pname);
@@ -388,7 +385,6 @@ void receipt()
 
             totalProd++;
         }
-
         cout << "\n\t\t\t\tDo you want to order more (y/n) ";
         cin >> ch;
     } while (ch == 'y');
