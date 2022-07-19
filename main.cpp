@@ -189,16 +189,17 @@ void write()
     current = key;
     previous = key;
     int empty = 0;
+    //int count = 0;
     while (strcmp(s[current].pcode, "xx"))
-    {
-        while ((strcmp(s[current].pcode, "xx")) && (atoi(s[current].pcode)) % 20 != key)
+    {   
+        while ((atoi(s[current].pcode)) % 20 != key)
         {
+            
             current++;
             previous = current;
             if (current == 20)
             {
                 current = 0;
-                previous = current;
             }
             if (strcmp(s[current].pcode, "xx") == 0)
             {
@@ -209,23 +210,41 @@ void write()
         if (empty == 1)
             break;
         if (jump[current] != 0)
-        {
-            flag = 1;
-            current = jump[current];
-            previous = current;
+        {   
+            while(jump[current] != 0)
+            {
+                flag = 1;
+                
+                current = jump[current];
+                previous = current;
+            
+            }
+            while(strcmp(s[current].pcode, "xx"))
+            {   
+                current++;
+                if (current == 20)
+                    current = 0;
+            }
+            break;
         }
         else
-        {
-            flag = 1;
-            current++;
-            if (current == 20)
-                current = 0;
+        {   while(strcmp(s[current].pcode, "xx"))
+            {
+                flag = 1;
+                current++;
+                if (current == 20)
+                    current = 0;
+            }
+            break;
         }
     }
     if (flag == 1)
         jump[previous] = current;
 
-    strcpy(s[current].pcode, tempcode);
+    for (int q = 0; q < 20;q++)
+        cout << jump[q] << " ";
+
+        strcpy(s[current].pcode, tempcode);
     cout << "\n\t\t\t\tEnter the Product Name: ";
     cin >> s[current].pname;
     cout << "\n\t\t\t\tEnter the Product Price: ";
@@ -250,14 +269,21 @@ void search()
     key = code % 20;
     curkey = key;
     unpackOneRecord(curkey);
+    int count = 0;
     while ((atoi(t.pcode)) % 20 != key)
     {
+        count++;
+        if (count == 20)
+        {
+            cout << "\n\t\t\t\tItem not found\n";
+            return;
+        }
         curkey++;
         if (curkey == 20)
             curkey = 0;
         unpackOneRecord(curkey);
     }
-
+    
     while (jump[curkey] != 0)
     {
         if (strcmp(t.pcode, tempcode) == 0)
@@ -275,11 +301,13 @@ void search()
         if (strcmp(t.pcode, tempcode) == 0)
         {
             flag1 = 1;
+           
         }
     }
 
     if (flag1 == 1)
-    {
+    {   for (int q = 0; q < 20;q++)
+            cout << jump[q] << " ";
         cout << "\n\t\t\t\tItem found!";
         cout << "\n\n\t\t\t\tProduct Code : " << t.pcode;
         cout << "\n\t\t\t\tPrduct Name : " << t.pname;
@@ -287,7 +315,11 @@ void search()
         cout << "\n\t\t\t\tDiscount on the Product : " << t.dis;
     }
     else
-        cout << "\n\t\t\t\tItem not found\n";
+    {
+        for (int q = 0; q < 20;q++)
+            cout << jump[q] << " ";
+        cout << "\n\t\t\t\tItem not found!\n";
+    }
 }
 
 void modify()
@@ -363,10 +395,7 @@ void receipt()
     {
         search();
 
-        if (flag1 != 1)
-        {
-            return;
-        }
+        
         if (flag1 == 1)
         {
             strcpy(bill[totalProd].pcode, t.pcode);
@@ -379,6 +408,7 @@ void receipt()
 
             totalProd++;
         }
+        
         cout << "\n\t\t\t\tDo you want to order more (y/n) ";
         cin >> ch;
     } while (ch == 'y');
