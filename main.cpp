@@ -225,9 +225,6 @@ void write()
     if (flag == 1)
         jump[previous] = current;
 
-    /*for (int q = 0; q < 20; q++)
-        cout << jump[q] << "  ";*/
-
     strcpy(s[current].pcode, tempcode);
     cout << "\n\t\t\t\tEnter the Product Name: ";
     cin >> s[current].pname;
@@ -260,9 +257,6 @@ void search()
             curkey = 0;
         unpackOneRecord(curkey);
     }
-
-    for (int q = 0; q < 20; q++)
-        cout << jump[q] << "  ";
 
     while (jump[curkey] != 0)
     {
